@@ -28,20 +28,30 @@ function onClick(evt) {
 
   const source = evt.target.dataset.source;
   galleryItems.map((item) => {
-    const instance = basicLightbox.create(` <img
+    const instance = basicLightbox.create(
+      ` <img
     class="gallery__image"
     src="${item.original}"
     data-source="${item.original}"
     alt="${item.description}"
-    />`);
-    if (source === item.original) {
-      instance.show();
-    }
-    document.addEventListener("keydown", onKey);
+    />`,
+      {
+        onShow: (instance) => {
+          document.addEventListener("keydown", onKey);
+        },
+        onClose: (instance) => {
+          document.removeEventListener("keydown", onKey);
+        },
+      }
+    );
     function onKey(evt) {
+      console.log(evt);
       if (instance.visible() && evt.code === "Escape") {
         instance.close();
       }
+    }
+    if (source === item.original) {
+      instance.show();
     }
   });
 }
